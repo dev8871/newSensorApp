@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "386835785217",
+    "project_id": "brewproject-8f12f",
+    "storage_bucket": "brewproject-8f12f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386835785217:android:640db23b7a0c7835f28200",
+        "android_client_info": {
+          "package_name": "com.example.esp32sensor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "386835785217-vnuadqi3fcjcv7mv2do2o02clqmcfts3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArw7f2rG0bkpQG0RbEBGk7IGFy15G61fA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "386835785217-vnuadqi3fcjcv7mv2do2o02clqmcfts3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
