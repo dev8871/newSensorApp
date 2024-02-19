@@ -6,27 +6,25 @@ import 'package:quickalert/quickalert.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class GasR extends StatefulWidget {
+class BioR extends StatefulWidget {
   final String title;
   final String dataParameter2;
   final String referenceRange;
-  const GasR(
+
+  const BioR(
       {super.key,
       required this.title,
       required this.dataParameter2,
       required this.referenceRange});
 
   @override
-  State<GasR> createState() => _GasRState();
+  State<BioR> createState() => _BioRState();
 }
 
-class _GasRState extends State<GasR> {
-  Timer _timer = Timer.periodic(Duration(seconds: 5), (timer) {});
-
+class _BioRState extends State<BioR> {
   late List<LiveData> chartData;
   late Map<String, dynamic> dailyJsonResponse;
   List<HistoryData> fullData = [];
@@ -35,32 +33,27 @@ class _GasRState extends State<GasR> {
   List<HistoryData> monthlyData = [];
   List<HistoryData> historyData = [];
   late ChartSeriesController _chartSeriesController;
+  String concSimplified = "";
+  String doubleconc = "";
+  Color graphColor = const Color.fromARGB(255, 152, 151, 151);
+  String graphLabel = "...";
+  // Color.fromARGB(255, 68, 158, 115)
   bool timerOff = false;
   String avgConcentration = '';
   String date = '';
+  Timer _timer = Timer.periodic(const Duration(seconds: 5), (timer) {});
 
   late String greeting;
   late int len;
   late Map<String, dynamic> jsonResponse;
   late String url;
-
-  late String resistance = "";
-  int concentration = 0;
+  String concentration = '0';
   String humidity = '0';
   String temperature = '0';
-  String mq135 = '0';
-  String mq2 = '0';
 
   int last_concentration = 0;
   int time = 11;
   int j = 0;
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
-
   Future<void> updatingHistoryData() async {
     List months = [
       " ",
@@ -78,71 +71,64 @@ class _GasRState extends State<GasR> {
       "Dec"
     ];
 
-    if (widget.dataParameter2 == "field1") {
-      url =
-          "https://thingspeak.com/channels/2009308/field/1.json?average=daily&round=0";
-    } else if (widget.dataParameter2 == "field2") {
-      url =
-          "https://thingspeak.com/channels/2009308/field/2.json?average=daily&round=0";
-    } else {
-      url =
-          "https://thingspeak.com/channels/2009308/field/3.json?average=daily&round=0";
-    }
+    // if ("field1" == "field3") {
+    //   url =
+    //       "https://thingspeak.com/channels/2186816/field/3.json?average=daily&round=0";
+    // } else if ("field1" == "field4") {
+    //   url =
+    //       "https://thingspeak.com/channels/2186816/field/4.json?average=daily&round=0";
+    // } else {
+    //   url =
+    //       "https://thingspeak.com/channels/2186816/field/5.json?average=daily&round=0";
+    // }
+    url =
+        "https://thingspeak.com/channels/2303264/field/5.json?average=daily&round=0";
     http.Response response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       setState(() {
         dailyJsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
         int length = dailyJsonResponse["feeds"].length;
+
         print('length = $length');
         for (int i = 9; i >= 0; i--) {
           try {
-            concentration = 0;
-            if (dailyJsonResponse["feeds"][length - 1 - i]
-                    [widget.dataParameter2] !=
-                null) {
-              resistance = dailyJsonResponse["feeds"][length - 1 - i]
-                  [widget.dataParameter2];
-
-              concentration = int.parse(resistance);
-            } else {
-              concentration = 0;
+            concentration = '0';
+            if (dailyJsonResponse["feeds"][length - 1]["field1"] != null) {
+              concentration = dailyJsonResponse["feeds"][length - 1]["field1"];
             }
           } catch (e) {
             print(e.toString());
           }
           DateTime date = DateTime.parse(
               dailyJsonResponse["feeds"][length - 1 - i]["created_at"]);
-          if (concentration > 200) {
-            concentration = 200;
+          if (int.parse(concentration) > 500) {
+            concentration = '500';
           }
-          dailyData.add(
-              HistoryData('${date.day} ${months[date.month]}', concentration));
+          dailyData.add(HistoryData(
+              '${date.day} ${months[date.month]}', int.parse(concentration)));
         }
         for (int i = 70; i > 0; i = i - 7) {
           int avgVal = 0;
           for (int j = i; j > i - 7 && j > 0; j--) {
             int myValue = 0;
             try {
-              if (dailyJsonResponse["feeds"][length - j]
-                      [widget.dataParameter2] !=
-                  null) {
-                resistance = dailyJsonResponse["feeds"][length - j]
-                    [widget.dataParameter2];
-
-                myValue = int.parse(resistance);
+              if (i < length &&
+                  dailyJsonResponse["feeds"][length - j]["field1"] != null) {
+                concentration =
+                    dailyJsonResponse["feeds"][length - j]["field1"];
+                myValue = int.parse(concentration);
               }
             } catch (e) {
-              myValue = 0;
+              print(e.toString());
             }
             avgVal += myValue;
           }
           int weeklyAvg = (avgVal / 7).round();
-          if (weeklyAvg > 200) {
-            weeklyAvg = 200;
+          if (weeklyAvg > 500) {
+            weeklyAvg = 500;
           }
           weeklyData.add(HistoryData('${i / 7} Week', weeklyAvg));
-          concentration = 0;
         }
 
         int currentmonth = 0, monthCount = 0, avgValue = 0;
@@ -152,10 +138,10 @@ class _GasRState extends State<GasR> {
               DateTime.parse(dailyJsonResponse["feeds"][k]["created_at"]);
           int month = date.month;
           try {
-            if (dailyJsonResponse["feeds"][k][widget.dataParameter2] != null) {
-              resistance = dailyJsonResponse["feeds"][k][widget.dataParameter2];
+            if (dailyJsonResponse["feeds"][k]["field1"] != null) {
+              concentration = dailyJsonResponse["feeds"][k]["field1"];
 
-              myValue1 = int.parse(resistance);
+              myValue1 = int.parse(concentration);
             }
           } catch (e) {
             myValue1 = 0;
@@ -166,8 +152,8 @@ class _GasRState extends State<GasR> {
             int monthlyAvg = (avgValue / monthCount).round();
             monthCount = 0;
             avgValue = 0;
-            if (monthlyAvg > 200) {
-              monthlyAvg = 200;
+            if (monthlyAvg > 500) {
+              monthlyAvg = 500;
             }
             monthlyData.add(HistoryData('${months[currentmonth]}', monthlyAvg));
             currentmonth = month;
@@ -177,6 +163,28 @@ class _GasRState extends State<GasR> {
         }
       });
     }
+    concentration = '0';
+  }
+
+  @override
+  void initState() {
+    print("field1");
+    updatingHistoryData();
+    chartData = getChartData();
+
+    _timer = Timer.periodic(
+        const Duration(seconds: 5), (Timer timer) => _loadData());
+    super.initState();
+    super.initState();
+
+    // print("calling data");
+    // print("called data");
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   void showAlert() {
@@ -189,19 +197,6 @@ class _GasRState extends State<GasR> {
       confirmBtnText: 'Okay'.tr,
       //confirmBtnColor: Colors.green
     );
-  }
-
-  @override
-  void initState() {
-    print(widget.dataParameter2);
-    updatingHistoryData();
-    chartData = getChartData();
-    _timer = Timer.periodic(
-        const Duration(seconds: 5), (Timer timer) => _loadData());
-    super.initState();
-
-    // print("calling data");
-    // print("called data");
   }
 
   @override
@@ -222,7 +217,7 @@ class _GasRState extends State<GasR> {
                     temperature = '0';
                     humidity = '0';
                     time = 11;
-                    concentration = 0;
+                    concentration = '0';
                     chartData = [
                       LiveData(0, 0),
                       LiveData(1, 0),
@@ -246,7 +241,6 @@ class _GasRState extends State<GasR> {
                   'Update',
                   style: TextStyle(
                       color: const Color.fromARGB(255, 68, 158, 115),
-                      fontFamily: 'JosefinSans',
                       fontSize: MediaQuery.of(context).size.height * 0.018),
                 ),
                 backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -265,8 +259,10 @@ class _GasRState extends State<GasR> {
         ),
         title: Text(
           widget.title.tr,
-          style:
-              TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),
+          style: TextStyle(
+              fontSize: MediaQuery.of(context).size.height * 0.025,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1),
         ),
         backgroundColor: const Color.fromARGB(255, 68, 158, 115),
       ),
@@ -279,196 +275,64 @@ class _GasRState extends State<GasR> {
             child: Text(
               "Concentration".tr,
               style: const TextStyle(
-                  fontSize: 25.0,
+                  fontSize: 40.0,
                   color: Color.fromARGB(255, 68, 158, 115),
                   fontFamily: 'JosefinSans',
                   letterSpacing: 2.0),
             ),
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.4,
-            child: SfRadialGauge(
-              enableLoadingAnimation: true,
-              axes: <RadialAxis>[
-                RadialAxis(
-                  tickOffset: 5.0,
-                  majorTickStyle: const MajorTickStyle(
-                      color: Color.fromARGB(255, 116, 116, 116)),
-                  minimum: 0.0,
-                  maximum: 200.00,
-                  interval: 20.0,
-                  axisLabelStyle:
-                      const GaugeTextStyle(fontWeight: FontWeight.w900),
-                  ranges: <GaugeRange>[
-                    GaugeRange(
-                      startValue: 0.00,
-                      endValue: 40,
-                      rangeOffset: -5.0,
-                      startWidth: 20,
-                      endWidth: 20,
-                      label: "Pure".tr,
-                      labelStyle: const GaugeTextStyle(color: Colors.white),
-                      gradient: const SweepGradient(colors: [
-                        Colors.greenAccent,
-                        Color.fromARGB(255, 70, 164, 119),
-                      ]),
-                    ),
-                    GaugeRange(
-                      startValue: 40,
-                      endValue: 80,
-                      startWidth: 20,
-                      endWidth: 20,
-                      rangeOffset: -5.0,
-                      label: "Good".tr,
-                      labelStyle: const GaugeTextStyle(color: Colors.white),
-                      gradient: const SweepGradient(colors: [
-                        Color.fromARGB(255, 70, 164, 119),
-                        Color.fromARGB(255, 133, 207, 83),
-                      ]),
-                    ),
-                    GaugeRange(
-                      label: 'Moderate'.tr,
-                      labelStyle: const GaugeTextStyle(color: Colors.white),
-                      startValue: 80,
-                      endValue: 120,
-                      startWidth: 20,
-                      endWidth: 20,
-                      rangeOffset: -5.0,
-                      gradient: const SweepGradient(colors: [
-                        Color.fromARGB(255, 133, 207, 83),
-                        Color.fromARGB(255, 193, 206, 98),
-                      ]),
-                    ),
-                    GaugeRange(
-                      label: 'Unhealthy'.tr,
-                      labelStyle: const GaugeTextStyle(color: Colors.white),
-                      startValue: 120,
-                      endValue: 160,
-                      startWidth: 20,
-                      endWidth: 20,
-                      rangeOffset: -5.0,
-                      gradient: const SweepGradient(colors: [
-                        Color.fromARGB(255, 193, 206, 98),
-                        Color.fromARGB(255, 225, 175, 48),
-                      ]),
-                    ),
-                    GaugeRange(
-                      label: 'Hazardous'.tr,
-                      labelStyle: const GaugeTextStyle(color: Colors.white),
-                      startValue: 160,
-                      endValue: 200,
-                      startWidth: 20,
-                      endWidth: 20,
-                      rangeOffset: -5.0,
-                      gradient: const SweepGradient(colors: [
-                        Color.fromARGB(255, 225, 175, 48),
-                        Color.fromARGB(255, 240, 72, 72),
-                      ]),
-                    ),
-                  ],
-                  pointers: <GaugePointer>[
-                    NeedlePointer(
-                      value: concentration * 1.00,
-                      enableAnimation: true,
-                    )
-                  ],
-                  annotations: <GaugeAnnotation>[
-                    GaugeAnnotation(
-                      widget: Text(
-                        '$concentration PPM',
-                        style: const TextStyle(
-                            color: Color.fromARGB(255, 52, 106, 80)),
-                      ),
-                      positionFactor: 0.5,
-                      angle: 90,
-                    )
-                  ],
-                )
-              ],
-            ),
-          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                width: MediaQuery.of(context).size.width * 0.45,
-                decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 68, 158, 115),
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: Center(
-                  child: Text(
-                    'Humidity : $humidity RH%',
-                    style: const TextStyle(
-                        color: Colors.white, fontFamily: 'JosefinSans'),
+              Material(
+                elevation: 6,
+                borderRadius: BorderRadius.circular(18),
+                child: Container(
+                  padding: const EdgeInsets.all(8.0),
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                        color: Colors.white,
+                        width: 3.0,
+                        style: BorderStyle.solid),
+                    borderRadius: BorderRadius.circular(18),
+                    color: Color.fromARGB(255, 23, 102, 65),
+                  ),
+                  child: Center(
+                    child: Text(
+                      doubleconc == "" ? "... µA" : '$doubleconc µA',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'JosefinSans',
+                          fontSize: MediaQuery.of(context).size.height * 0.07),
+                    ),
                   ),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                width: MediaQuery.of(context).size.width * 0.45,
-                decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 68, 158, 115),
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: Center(
-                  child: Text(
-                    'Temperature : $temperature °C',
-                    style: const TextStyle(
-                        color: Colors.white, fontFamily: 'JosefinSans'),
-                  ),
-                ),
-              )
             ],
           ),
           Container(
-            height: MediaQuery.of(context).size.height * 0.30,
-            width: MediaQuery.of(context).size.width * 0.9,
-            // margin: const EdgeInsets.only(top: 10),
-            padding: const EdgeInsets.only(top: 10),
+            padding: const EdgeInsets.all(8.0),
+            width: MediaQuery.of(context).size.width * 0.8,
+            height: MediaQuery.of(context).size.height * 0.2,
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(15.0)),
-            child: SfCartesianChart(
-                title: ChartTitle(
-                  text: "Graph",
-                  textStyle: const TextStyle(
-                      fontSize: 15.0,
-                      color: Color.fromARGB(255, 68, 158, 115),
-                      fontFamily: 'JosefinSans',
-                      letterSpacing: 2.0),
-                ),
-                enableAxisAnimation: true,
-                series: <LineSeries<LiveData, int>>[
-                  LineSeries<LiveData, int>(
-                    onRendererCreated: (ChartSeriesController controller) {
-                      _chartSeriesController = controller;
-                    },
-                    dataSource: chartData,
-                    color: const Color.fromARGB(255, 68, 158, 115),
-                    xValueMapper: (LiveData sales, _) => sales.time,
-                    yValueMapper: (LiveData sales, _) => sales.conc,
-                  )
-                ],
-                primaryXAxis: NumericAxis(
-                    majorGridLines: const MajorGridLines(width: 0),
-                    edgeLabelPlacement: EdgeLabelPlacement.shift,
-                    interval: 1,
-                    title: AxisTitle(
-                        text: 'Time (Sec)',
-                        textStyle: const TextStyle(
-                            fontSize: 12.0,
-                            color: Color.fromARGB(255, 68, 158, 115),
-                            fontFamily: 'JosefinSans'))),
-                primaryYAxis: NumericAxis(
-                    interval: 10,
-                    axisLine: const AxisLine(width: 0),
-                    majorTickLines: const MajorTickLines(size: 0),
-                    title: AxisTitle(
-                        text: 'Concentration(PPM)',
-                        textStyle: const TextStyle(
-                            fontSize: 12.0,
-                            color: Color.fromARGB(255, 68, 158, 115),
-                            fontFamily: 'JosefinSans')))),
+              border: Border.all(
+                  color: Colors.white, width: 3.0, style: BorderStyle.solid),
+              borderRadius: BorderRadius.circular(18),
+              color: graphColor,
+            ),
+            child: Center(
+              child: Text(
+                // doubleconc == "" ? "... µA" : '$doubleconc µA',
+                graphLabel,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'JosefinSans',
+                    fontSize: MediaQuery.of(context).size.height * 0.06,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -673,7 +537,7 @@ class _GasRState extends State<GasR> {
                                               fontFamily: 'JosefinSans',
                                               fontWeight: FontWeight.w400),
                                         )),
-                                  ),
+                                  )
                                 ],
                               );
                             });
@@ -694,11 +558,11 @@ class _GasRState extends State<GasR> {
                 child: FloatingActionButton.extended(
                     onPressed: () {
                       CreatePdf().createPDF(
-                          'Gas Sensor',
+                          'Bio Sensor',
                           widget.title,
                           humidity,
                           temperature,
-                          concentration.toString(),
+                          concentration,
                           widget.referenceRange);
                     },
                     icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
@@ -719,7 +583,7 @@ class _GasRState extends State<GasR> {
   }
 
   Future<void> _loadData() async {
-    url = "https://api.thingspeak.com/channels/2009308/feeds.json?results";
+    url = "https://api.thingspeak.com/channels/2303264/feeds.json?results";
 
     //http request
 
@@ -731,53 +595,80 @@ class _GasRState extends State<GasR> {
         int length = jsonResponse["feeds"].length;
 
         try {
-          if (jsonResponse["feeds"][length - 1][widget.dataParameter2] !=
-              null) {
-            resistance =
-                jsonResponse["feeds"][length - 1][widget.dataParameter2];
+          if (jsonResponse["feeds"][length - 1]["field1"] != null) {
+            concentration = jsonResponse["feeds"][length - 1]["field1"];
+            int i = 0;
+            int clength = concentration.length;
 
-            concentration = int.parse(resistance);
-          } else {
-            concentration = last_concentration;
-            print("Null value from Thingspeak: ");
+            // print(uricAcid);
+            concSimplified = "";
+            while (concentration[i] != '.' && i < clength) {
+              concSimplified += concentration[i];
+              i++;
+            }
+            i = 0;
+            doubleconc = "";
+            while (concentration[i] != '\r' && i < clength) {
+              doubleconc += concentration[i];
+              i++;
+            }
+            concentration = concSimplified;
+            // print("length= $length conc= $uricAcidSimplified");
           }
+          setState(() {
+            if (doubleconc == "") {
+              graphColor = const Color.fromARGB(255, 255, 255, 255);
+              graphLabel = "...";
+            } else if (double.parse(doubleconc) < 20) {
+              graphColor = Color.fromARGB(255, 68, 158, 115);
+              graphLabel = "Pure";
+            } else if (double.parse(doubleconc) < 40) {
+              graphColor = Color.fromARGB(255, 233, 249, 8);
+              graphLabel = "Good";
+            } else if (double.parse(doubleconc) < 60) {
+              graphColor = Color.fromARGB(255, 255, 191, 0);
+              graphLabel = "Moderate";
+            } else if (double.parse(doubleconc) < 80) {
+              graphColor = Colors.orange;
+              graphLabel = "Unhealthy";
+            } else if (double.parse(doubleconc) < 40) {
+              graphColor = Colors.red;
+              graphLabel = "Hazardous";
+            }
+          });
         } catch (e) {
           print(e.toString());
         }
-        try {
-          if (jsonResponse["feeds"][length - 1]["field4"] != null) {
-            temperature = jsonResponse["feeds"][length - 1]["field4"];
-          }
-        } catch (e) {
-          print(e.toString());
-        }
-        try {
-          if (jsonResponse["feeds"][length - 1]["field5"] != null) {
-            humidity = jsonResponse["feeds"][length - 1]["field5"];
-          }
-        } catch (e) {
-          print(e.toString());
-        }
-        try {
-          if (jsonResponse["feeds"][length - 1][widget.dataParameter2] !=
-              null) {
-            mq135 = jsonResponse["feeds"][length - 1][widget.dataParameter2];
-          }
-        } catch (e) {
-          print(e.toString());
-        }
-        try {
-          if (jsonResponse["feeds"][length - 1][widget.dataParameter2] !=
-              null) {
-            mq2 = jsonResponse["feeds"][length - 1][widget.dataParameter2];
-          }
-        } catch (e) {
-          print(e.toString());
-        }
+        // try {
+        //   if (jsonResponse["feeds"][length - 1]["field1"] !=
+        //       null) {
+        //     concentration =
+        //         jsonResponse["feeds"][length - 1]["field1"];
+        //   } else {
+        //     concentration = last_concentration.toString();
+        //     print("Null value from Thingspeak: ");
+        //   }
+        // } catch (e) {
+        //   print(e.toString());
+        // }
+        // try {
+        //   if (jsonResponse["feeds"][length - 1]["field1"] != null) {
+        //     temperature = jsonResponse["feeds"][length - 1]["field1"];
+        //   }
+        // } catch (e) {
+        //   print(e.toString());
+        // }
+        // try {
+        //   if (jsonResponse["feeds"][length - 1]["field2"] != null) {
+        //     humidity = jsonResponse["feeds"][length - 1]["field2"];
+        //   }
+        // } catch (e) {
+        //   print(e.toString());
+        // }
 
         // print(concentration);
 
-        if (concentration >= 100 &&
+        if (int.parse(concentration) >= 100 &&
             timerOff == false &&
             last_concentration != concentration) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -834,6 +725,7 @@ class _GasRState extends State<GasR> {
                       'assets/images/bubbles.svg',
                       height: 48,
                       width: 40,
+                      color: const Color.fromARGB(255, 161, 20, 10),
                     ),
                   ),
                 ),
@@ -845,6 +737,7 @@ class _GasRState extends State<GasR> {
                     children: [
                       SvgPicture.asset(
                         "assets/images/fail.svg",
+                        color: const Color.fromARGB(255, 161, 20, 10),
                         height: 45,
                       ),
                       Positioned(
@@ -862,9 +755,9 @@ class _GasRState extends State<GasR> {
             elevation: 0,
           ));
         }
-        last_concentration = concentration;
+        last_concentration = int.parse(concentration);
 
-        chartData.add(LiveData(time++, concentration));
+        chartData.add(LiveData(time++, int.parse(concentration)));
         chartData.removeAt(0);
         _chartSeriesController.updateDataSource(
             addedDataIndex: chartData.length - 1, removedDataIndex: 0);
@@ -880,12 +773,12 @@ class _GasRState extends State<GasR> {
       LiveData(2, 0),
       LiveData(3, 0),
       LiveData(4, 0),
-      LiveData(5, concentration),
-      LiveData(6, concentration),
-      LiveData(7, concentration),
-      LiveData(8, concentration),
-      LiveData(9, concentration),
-      LiveData(10, concentration),
+      LiveData(5, int.parse(concentration)),
+      LiveData(6, int.parse(concentration)),
+      LiveData(7, int.parse(concentration)),
+      LiveData(8, int.parse(concentration)),
+      LiveData(9, int.parse(concentration)),
+      LiveData(10, int.parse(concentration)),
     ];
   }
 }

@@ -10,23 +10,21 @@ import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class GasR extends StatefulWidget {
+class AgriR extends StatefulWidget {
   final String title;
   final String dataParameter2;
   final String referenceRange;
-  const GasR(
+  const AgriR(
       {super.key,
       required this.title,
       required this.dataParameter2,
       required this.referenceRange});
 
   @override
-  State<GasR> createState() => _GasRState();
+  State<AgriR> createState() => _AgriRState();
 }
 
-class _GasRState extends State<GasR> {
-  Timer _timer = Timer.periodic(Duration(seconds: 5), (timer) {});
-
+class _AgriRState extends State<AgriR> {
   late List<LiveData> chartData;
   late Map<String, dynamic> dailyJsonResponse;
   List<HistoryData> fullData = [];
@@ -38,29 +36,19 @@ class _GasRState extends State<GasR> {
   bool timerOff = false;
   String avgConcentration = '';
   String date = '';
+  Timer _timer = Timer.periodic(Duration(seconds: 5), (timer) {});
 
   late String greeting;
   late int len;
   late Map<String, dynamic> jsonResponse;
   late String url;
-
-  late String resistance = "";
-  int concentration = 0;
+  String concentration = '0';
   String humidity = '0';
   String temperature = '0';
-  String mq135 = '0';
-  String mq2 = '0';
 
   int last_concentration = 0;
   int time = 11;
   int j = 0;
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
-
   Future<void> updatingHistoryData() async {
     List months = [
       " ",
@@ -78,18 +66,17 @@ class _GasRState extends State<GasR> {
       "Dec"
     ];
 
-    if (widget.dataParameter2 == "field1") {
+    if (widget.dataParameter2 == "field3") {
       url =
-          "https://thingspeak.com/channels/2009308/field/1.json?average=daily&round=0";
-    } else if (widget.dataParameter2 == "field2") {
+          "https://thingspeak.com/channels/2186816/field/3.json?average=daily&round=0";
+    } else if (widget.dataParameter2 == "field4") {
       url =
-          "https://thingspeak.com/channels/2009308/field/2.json?average=daily&round=0";
+          "https://thingspeak.com/channels/2186816/field/4.json?average=daily&round=0";
     } else {
       url =
-          "https://thingspeak.com/channels/2009308/field/3.json?average=daily&round=0";
+          "https://thingspeak.com/channels/2186816/field/5.json?average=daily&round=0";
     }
     http.Response response = await http.get(Uri.parse(url));
-
     if (response.statusCode == 200) {
       setState(() {
         dailyJsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
@@ -97,27 +84,23 @@ class _GasRState extends State<GasR> {
         print('length = $length');
         for (int i = 9; i >= 0; i--) {
           try {
-            concentration = 0;
+            concentration = '0';
             if (dailyJsonResponse["feeds"][length - 1 - i]
                     [widget.dataParameter2] !=
                 null) {
-              resistance = dailyJsonResponse["feeds"][length - 1 - i]
+              concentration = dailyJsonResponse["feeds"][length - 1 - i]
                   [widget.dataParameter2];
-
-              concentration = int.parse(resistance);
-            } else {
-              concentration = 0;
             }
           } catch (e) {
             print(e.toString());
           }
           DateTime date = DateTime.parse(
               dailyJsonResponse["feeds"][length - 1 - i]["created_at"]);
-          if (concentration > 200) {
-            concentration = 200;
+          if (int.parse(concentration) > 200) {
+            concentration = '200';
           }
-          dailyData.add(
-              HistoryData('${date.day} ${months[date.month]}', concentration));
+          dailyData.add(HistoryData(
+              '${date.day} ${months[date.month]}', int.parse(concentration)));
         }
         for (int i = 70; i > 0; i = i - 7) {
           int avgVal = 0;
@@ -127,22 +110,23 @@ class _GasRState extends State<GasR> {
               if (dailyJsonResponse["feeds"][length - j]
                       [widget.dataParameter2] !=
                   null) {
-                resistance = dailyJsonResponse["feeds"][length - j]
+                concentration = dailyJsonResponse["feeds"][length - j]
                     [widget.dataParameter2];
-
-                myValue = int.parse(resistance);
+                myValue = int.parse(concentration);
+              } else {
+                myValue = 0;
               }
             } catch (e) {
               myValue = 0;
+              print(e.toString());
             }
             avgVal += myValue;
           }
           int weeklyAvg = (avgVal / 7).round();
-          if (weeklyAvg > 200) {
+          if (weeklyAvg >= 200) {
             weeklyAvg = 200;
           }
           weeklyData.add(HistoryData('${i / 7} Week', weeklyAvg));
-          concentration = 0;
         }
 
         int currentmonth = 0, monthCount = 0, avgValue = 0;
@@ -153,9 +137,12 @@ class _GasRState extends State<GasR> {
           int month = date.month;
           try {
             if (dailyJsonResponse["feeds"][k][widget.dataParameter2] != null) {
-              resistance = dailyJsonResponse["feeds"][k][widget.dataParameter2];
+              concentration =
+                  dailyJsonResponse["feeds"][k][widget.dataParameter2];
 
-              myValue1 = int.parse(resistance);
+              myValue1 = int.parse(concentration);
+            } else {
+              myValue1 = 0;
             }
           } catch (e) {
             myValue1 = 0;
@@ -165,18 +152,34 @@ class _GasRState extends State<GasR> {
           } else if (currentmonth != month || k == length - 1) {
             int monthlyAvg = (avgValue / monthCount).round();
             monthCount = 0;
-            avgValue = 0;
-            if (monthlyAvg > 200) {
+            if (monthlyAvg > 1000) {
               monthlyAvg = 200;
             }
+            avgValue = 0;
             monthlyData.add(HistoryData('${months[currentmonth]}', monthlyAvg));
             currentmonth = month;
           }
           avgValue += myValue1;
           monthCount++;
         }
+        concentration = '0';
       });
     }
+  }
+
+  @override
+  void initState() {
+    updatingHistoryData();
+    chartData = getChartData();
+    _timer = Timer.periodic(
+        const Duration(seconds: 5), (Timer timer) => _loadData());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   void showAlert() {
@@ -189,19 +192,6 @@ class _GasRState extends State<GasR> {
       confirmBtnText: 'Okay'.tr,
       //confirmBtnColor: Colors.green
     );
-  }
-
-  @override
-  void initState() {
-    print(widget.dataParameter2);
-    updatingHistoryData();
-    chartData = getChartData();
-    _timer = Timer.periodic(
-        const Duration(seconds: 5), (Timer timer) => _loadData());
-    super.initState();
-
-    // print("calling data");
-    // print("called data");
   }
 
   @override
@@ -222,7 +212,7 @@ class _GasRState extends State<GasR> {
                     temperature = '0';
                     humidity = '0';
                     time = 11;
-                    concentration = 0;
+                    concentration = '0';
                     chartData = [
                       LiveData(0, 0),
                       LiveData(1, 0),
@@ -368,7 +358,7 @@ class _GasRState extends State<GasR> {
                   ],
                   pointers: <GaugePointer>[
                     NeedlePointer(
-                      value: concentration * 1.00,
+                      value: int.parse(concentration) * 1.00,
                       enableAnimation: true,
                     )
                   ],
@@ -694,11 +684,11 @@ class _GasRState extends State<GasR> {
                 child: FloatingActionButton.extended(
                     onPressed: () {
                       CreatePdf().createPDF(
-                          'Gas Sensor',
+                          'Agriculture Sensor',
                           widget.title,
                           humidity,
                           temperature,
-                          concentration.toString(),
+                          concentration,
                           widget.referenceRange);
                     },
                     icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
@@ -719,7 +709,7 @@ class _GasRState extends State<GasR> {
   }
 
   Future<void> _loadData() async {
-    url = "https://api.thingspeak.com/channels/2009308/feeds.json?results";
+    url = "https://api.thingspeak.com/channels/2186816/feeds.json?results";
 
     //http request
 
@@ -733,43 +723,25 @@ class _GasRState extends State<GasR> {
         try {
           if (jsonResponse["feeds"][length - 1][widget.dataParameter2] !=
               null) {
-            resistance =
+            concentration =
                 jsonResponse["feeds"][length - 1][widget.dataParameter2];
-
-            concentration = int.parse(resistance);
           } else {
-            concentration = last_concentration;
+            concentration = last_concentration.toString();
             print("Null value from Thingspeak: ");
           }
         } catch (e) {
           print(e.toString());
         }
         try {
-          if (jsonResponse["feeds"][length - 1]["field4"] != null) {
-            temperature = jsonResponse["feeds"][length - 1]["field4"];
+          if (jsonResponse["feeds"][length - 1]["field1"] != null) {
+            temperature = jsonResponse["feeds"][length - 1]["field1"];
           }
         } catch (e) {
           print(e.toString());
         }
         try {
-          if (jsonResponse["feeds"][length - 1]["field5"] != null) {
-            humidity = jsonResponse["feeds"][length - 1]["field5"];
-          }
-        } catch (e) {
-          print(e.toString());
-        }
-        try {
-          if (jsonResponse["feeds"][length - 1][widget.dataParameter2] !=
-              null) {
-            mq135 = jsonResponse["feeds"][length - 1][widget.dataParameter2];
-          }
-        } catch (e) {
-          print(e.toString());
-        }
-        try {
-          if (jsonResponse["feeds"][length - 1][widget.dataParameter2] !=
-              null) {
-            mq2 = jsonResponse["feeds"][length - 1][widget.dataParameter2];
+          if (jsonResponse["feeds"][length - 1]["field2"] != null) {
+            humidity = jsonResponse["feeds"][length - 1]["field2"];
           }
         } catch (e) {
           print(e.toString());
@@ -777,7 +749,7 @@ class _GasRState extends State<GasR> {
 
         // print(concentration);
 
-        if (concentration >= 100 &&
+        if (int.parse(concentration) >= 100 &&
             timerOff == false &&
             last_concentration != concentration) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -834,6 +806,7 @@ class _GasRState extends State<GasR> {
                       'assets/images/bubbles.svg',
                       height: 48,
                       width: 40,
+                      color: const Color.fromARGB(255, 161, 20, 10),
                     ),
                   ),
                 ),
@@ -845,6 +818,7 @@ class _GasRState extends State<GasR> {
                     children: [
                       SvgPicture.asset(
                         "assets/images/fail.svg",
+                        color: const Color.fromARGB(255, 161, 20, 10),
                         height: 45,
                       ),
                       Positioned(
@@ -862,9 +836,9 @@ class _GasRState extends State<GasR> {
             elevation: 0,
           ));
         }
-        last_concentration = concentration;
+        last_concentration = int.parse(concentration);
 
-        chartData.add(LiveData(time++, concentration));
+        chartData.add(LiveData(time++, int.parse(concentration)));
         chartData.removeAt(0);
         _chartSeriesController.updateDataSource(
             addedDataIndex: chartData.length - 1, removedDataIndex: 0);
@@ -880,12 +854,12 @@ class _GasRState extends State<GasR> {
       LiveData(2, 0),
       LiveData(3, 0),
       LiveData(4, 0),
-      LiveData(5, concentration),
-      LiveData(6, concentration),
-      LiveData(7, concentration),
-      LiveData(8, concentration),
-      LiveData(9, concentration),
-      LiveData(10, concentration),
+      LiveData(5, int.parse(concentration)),
+      LiveData(6, int.parse(concentration)),
+      LiveData(7, int.parse(concentration)),
+      LiveData(8, int.parse(concentration)),
+      LiveData(9, int.parse(concentration)),
+      LiveData(10, int.parse(concentration)),
     ];
   }
 }

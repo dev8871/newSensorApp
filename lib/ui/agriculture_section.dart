@@ -1,41 +1,43 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:esp32sensor/ui/gasR.dart';
+import 'package:esp32sensor/ui/agriR.dart';
 import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
 
-import 'package:get/get.dart';
-
-class GasPage extends StatefulWidget {
-  const GasPage({Key? key}) : super(key: key);
+class AgriculturePage extends StatefulWidget {
+  const AgriculturePage({Key? key}) : super(key: key);
 
   @override
-  State<GasPage> createState() => _GasPageState();
+  State<AgriculturePage> createState() => _AgriculturePageState();
 }
 
-class _GasPageState extends State<GasPage> {
+class _AgriculturePageState extends State<AgriculturePage> {
   String avgConcentration = '';
   String date = '';
+  Timer _timer = Timer.periodic(Duration(seconds: 5), (timer) {});
 
   late String greeting;
   late int len;
   late Map<String, dynamic> jsonResponse;
   late String url;
 
-  late String resistance = "";
-  Timer _timer = Timer.periodic(Duration(seconds: 5), (timer) {});
+  String potassium = "";
   int concentration = 0;
-  String butane = '0';
-  String carbonDioxide = '0';
+  String phosphorous = '0';
+  String nitrogen = '0';
   String humidity = '0';
   String temperature = '0';
-  bool timeroff = false;
+
   int time = 11;
   @override
   void initState() {
+    _loadData();
     _timer = Timer.periodic(
         const Duration(seconds: 5), (Timer timer) => _loadData());
+    super.initState();
     super.initState();
     // print("calling data");
     // print("called data");
@@ -48,7 +50,7 @@ class _GasPageState extends State<GasPage> {
   }
 
   Future<void> _loadData() async {
-    url = "https://api.thingspeak.com/channels/2009308/feeds.json?results";
+    url = "https://api.thingspeak.com/channels/2186816/feeds.json?results";
 
     //http request
 
@@ -61,37 +63,35 @@ class _GasPageState extends State<GasPage> {
 
         try {
           if (jsonResponse["feeds"][length - 1]["field1"] != null) {
-            resistance = jsonResponse["feeds"][length - 1]["field1"];
-
-            concentration = int.parse(resistance);
+            temperature = jsonResponse["feeds"][length - 1]["field1"];
           }
         } catch (e) {
           print(e.toString());
         }
         try {
           if (jsonResponse["feeds"][length - 1]["field2"] != null) {
-            butane = jsonResponse["feeds"][length - 1]["field2"];
+            humidity = jsonResponse["feeds"][length - 1]["field2"];
           }
         } catch (e) {
           print(e.toString());
         }
         try {
           if (jsonResponse["feeds"][length - 1]["field3"] != null) {
-            carbonDioxide = jsonResponse["feeds"][length - 1]["field3"];
+            nitrogen = jsonResponse["feeds"][length - 1]["field3"];
           }
         } catch (e) {
-          print("empty value for carbon dioxide");
+          print("empty value for nitrogen");
         }
         try {
           if (jsonResponse["feeds"][length - 1]["field4"] != null) {
-            temperature = jsonResponse["feeds"][length - 1]["field4"];
+            phosphorous = jsonResponse["feeds"][length - 1]["field4"];
           }
         } catch (e) {
           print(e.toString());
         }
         try {
           if (jsonResponse["feeds"][length - 1]["field5"] != null) {
-            humidity = jsonResponse["feeds"][length - 1]["field5"];
+            potassium = jsonResponse["feeds"][length - 1]["field5"];
           }
         } catch (e) {
           print(e.toString());
@@ -114,15 +114,12 @@ class _GasPageState extends State<GasPage> {
             child: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                setState(() {
-                  timeroff = true;
-                  Navigator.pop(context);
-                });
+                Navigator.pop(context);
               },
             ),
           ),
           title: Text(
-            "gas".tr,
+            "Agriculture",
             style: TextStyle(
                 fontFamily: 'JosefinSans',
                 fontSize: MediaQuery.of(context).size.height * 0.03),
@@ -168,7 +165,7 @@ class _GasPageState extends State<GasPage> {
                             decoration: const BoxDecoration(
                                 image: DecorationImage(
                                     image: AssetImage(
-                                        "assets/images/gasindustry.png"),
+                                        "assets/images/agricultureIndustry.png"),
                                     fit: BoxFit.contain)),
                           ),
                           Padding(
@@ -265,7 +262,7 @@ class _GasPageState extends State<GasPage> {
                                             borderRadius:
                                                 BorderRadius.circular(100)),
                                         child: Text(
-                                          '$concentration PPM',
+                                          '$nitrogen PPM',
                                           style: TextStyle(
                                               color: const Color.fromARGB(
                                                   255, 40, 132, 90),
@@ -277,44 +274,16 @@ class _GasPageState extends State<GasPage> {
                                         ),
                                       ),
                                     ),
-                                    RichText(
-                                        text: TextSpan(
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontFamily: 'JosefinSans',
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.02),
-                                            children: [
-                                          const TextSpan(text: 'NO'),
-                                          WidgetSpan(
-                                            child: Transform.translate(
-                                              offset: const Offset(0.0, 3.0),
-                                              child: Text(
-                                                '2',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontFamily: 'JosefinSans',
-                                                    fontSize:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.015),
-                                              ),
-                                            ),
-                                          ),
-                                        ]))
-                                    // Text(
-                                    //   'No2',
-                                    //   style: TextStyle(
-                                    //       color: Colors.white,
-                                    //       fontFamily: 'JosefinSans',
-                                    //       fontSize: MediaQuery.of(context)
-                                    //               .size
-                                    //               .height *
-                                    //           0.02),
-                                    // ),
+                                    Text(
+                                      'Nitrogen (N)',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'JosefinSans',
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.02),
+                                    ),
                                   ],
                                 ),
                               ],
@@ -348,7 +317,7 @@ class _GasPageState extends State<GasPage> {
                                             borderRadius:
                                                 BorderRadius.circular(100)),
                                         child: Text(
-                                          '$butane PPM',
+                                          '$phosphorous PPM',
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontFamily: 'JosefinSans',
@@ -360,7 +329,7 @@ class _GasPageState extends State<GasPage> {
                                       ),
                                     ),
                                     Text(
-                                      'Butane',
+                                      'Phosphorous (P)',
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontFamily: 'JosefinSans',
@@ -392,7 +361,7 @@ class _GasPageState extends State<GasPage> {
                                             borderRadius:
                                                 BorderRadius.circular(100)),
                                         child: Text(
-                                          '$carbonDioxide PPM',
+                                          '$potassium PPM',
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontFamily: 'JosefinSans',
@@ -403,44 +372,16 @@ class _GasPageState extends State<GasPage> {
                                         ),
                                       ),
                                     ),
-                                    RichText(
-                                        text: TextSpan(
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontFamily: 'JosefinSans',
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.02),
-                                            children: [
-                                          const TextSpan(text: 'CO'),
-                                          WidgetSpan(
-                                            child: Transform.translate(
-                                              offset: const Offset(0.0, 3.0),
-                                              child: Text(
-                                                '2',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontFamily: 'JosefinSans',
-                                                    fontSize:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.015),
-                                              ),
-                                            ),
-                                          ),
-                                        ]))
-                                    // Text(
-                                    //   'Co2',
-                                    //   style: TextStyle(
-                                    //       color: Colors.white,
-                                    //       fontFamily: 'JosefinSans',
-                                    //       fontSize: MediaQuery.of(context)
-                                    //               .size
-                                    //               .height *
-                                    //           0.02),
-                                    // ),
+                                    Text(
+                                      "Potassium (K)",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'JosefinSans',
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.02),
+                                    ),
                                   ],
                                 ),
                               ],
@@ -458,46 +399,8 @@ class _GasPageState extends State<GasPage> {
                   child: InkWell(
                     onTap: (() {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => GasR(
-                                title: 'NO2'.tr,
-                                dataParameter2: "field1",
-                                referenceRange: '',
-                              )));
-                    }),
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.075,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: Colors.white,
-                              width: 2.0,
-                              style: BorderStyle.solid),
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.white),
-                      child: Text(
-                        "NO2".tr,
-                        style: TextStyle(
-                            fontFamily: 'JosefinSans',
-                            color: const Color.fromARGB(255, 8, 86, 50),
-                            fontSize:
-                                MediaQuery.of(context).size.height * 0.021,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Material(
-                  elevation: 3,
-                  borderRadius: BorderRadius.circular(15),
-                  child: InkWell(
-                    onTap: (() {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => GasR(
-                                title: 'CO2'.tr,
+                          builder: (context) => const AgriR(
+                                title: 'Nitrogen',
                                 dataParameter2: "field3",
                                 referenceRange: '',
                               )));
@@ -514,7 +417,7 @@ class _GasPageState extends State<GasPage> {
                           borderRadius: BorderRadius.circular(15),
                           color: Colors.white),
                       child: Text(
-                        "CO2".tr,
+                        'Nitrogen (N)',
                         style: TextStyle(
                             fontFamily: 'JosefinSans',
                             color: const Color.fromARGB(255, 8, 86, 50),
@@ -534,9 +437,9 @@ class _GasPageState extends State<GasPage> {
                   child: InkWell(
                     onTap: (() {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const GasR(
-                                title: 'Butane',
-                                dataParameter2: "field2",
+                          builder: (context) => const AgriR(
+                                title: 'Phosphorous',
+                                dataParameter2: "field4",
                                 referenceRange: '',
                               )));
                     }),
@@ -552,7 +455,45 @@ class _GasPageState extends State<GasPage> {
                           borderRadius: BorderRadius.circular(15),
                           color: Colors.white),
                       child: Text(
-                        'Butane',
+                        'Phosphorous (P)',
+                        style: TextStyle(
+                            fontFamily: 'JosefinSans',
+                            color: const Color.fromARGB(255, 8, 86, 50),
+                            fontSize:
+                                MediaQuery.of(context).size.height * 0.021,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Material(
+                  elevation: 3,
+                  borderRadius: BorderRadius.circular(15),
+                  child: InkWell(
+                    onTap: (() {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const AgriR(
+                                title: 'Potassium',
+                                dataParameter2: "field5",
+                                referenceRange: '',
+                              )));
+                    }),
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.075,
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Colors.white,
+                              width: 2.0,
+                              style: BorderStyle.solid),
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.white),
+                      child: Text(
+                        'Potassium (K)',
                         style: TextStyle(
                             fontFamily: 'JosefinSans',
                             color: const Color.fromARGB(255, 8, 86, 50),

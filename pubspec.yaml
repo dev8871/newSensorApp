@@ -27,36 +27,40 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  syncfusion_flutter_pdf: ^23.1.36
+  path_provider: ^2.1.1
+  open_file: ^3.1.0
+  chewie: ^1.3.6
+  cloud_firestore: ^4.3.1
+  cupertino_icons: ^1.0.2
+  firebase_auth: ^4.2.4
+  firebase_core: ^2.4.1
+  firebase_storage: ^11.0.10
   flutter:
     sdk: flutter
-  # flutter_localisations:
-  #   sdk : flutter
-  # # provider: ^5.0.0
-  get:
-    
-
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-  http: ^0.13.5
+  flutter_spinkit: ^5.1.0
+  flutter_svg: ^2.0.0+1
+  get: null
+  get_storage: null
+  intl: ^0.18.1
+  http: ^1.1.0
+  intro_slider: ^4.2.0
+  provider: ^6.0.4
+  quickalert: ^1.0.1
   shared_preferences: ^2.0.15
-  syncfusion_flutter_gauges: ^20.3.59
+  syncfusion_flutter_charts: ^23.1.36
+  syncfusion_flutter_gauges: ^23.1.36
+  video_player: ^2.4.10
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
+  flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
-  flutter_lints: ^2.0.0
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter packages.
 flutter:
 
@@ -68,17 +72,24 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/soil.png
-    - assets/images/water.png
+    - assets/images/bio.png
     - assets/images/gas.png
     - assets/images/farmindustry.png
     - assets/images/gasindustry.png
+    - assets/images/medicalIndustry.png
+    - assets/images/agricultureIndustry.png
+    - assets/images/pdfLogo.png
+    - assets/images/uricAcid.png
+    - assets/images/glucose.png
+    - assets/images/caffeine.png
+    - assets/images/bubbles.svg
+    - assets/images/fail.svg
+    - assets/images/close.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
-
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
-
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
@@ -88,4 +99,5 @@ flutter:
     - family: JosefinSans
       fonts:
         - asset: assets/fonts/JosefinSans-Regular.ttf
-  
+flutter_intl:
+  enabled: true

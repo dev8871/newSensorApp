@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.esp32sensor">
-    
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
+        android:usesCleartextTraffic="true"
         android:label="esp32sensor"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
