@@ -6,6 +6,7 @@ import 'package:esp32sensor/ui/About_us.dart';
 import 'package:esp32sensor/ui/Bio_section.dart';
 import 'package:esp32sensor/ui/agriculture_section.dart';
 import 'package:esp32sensor/ui/gas_section.dart';
+import 'package:esp32sensor/ui/water_section.dart';
 import 'package:esp32sensor/video/videoStream.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -146,12 +147,6 @@ class _HomepageState extends State<Homepage> {
               padding: const EdgeInsets.only(top: 15.0),
               child: Column(
                 children: [
-                  // menuItem("Edit Profile", Icons.edit_note_sharp, () {}),
-                  // menuItem("Change Language", Icons.text_format, () {}),
-                  // menuItem("How to use", Icons.question_answer_outlined, () {
-
-                  // }),
-                  // menuItem("About Us", Icons.info, () {})
                   InkWell(
                     onTap: () {
                       Navigator.push(
@@ -324,13 +319,12 @@ class _HomepageState extends State<Homepage> {
         )),
       ),
       appBar: AppBar(
-        leading: null,
         title: Text(
           'title'.tr,
           style: TextStyle(
-            fontFamily: 'JosefinSans',
-            fontSize: MediaQuery.of(context).size.height * 0.03,
-          ),
+              fontFamily: 'JosefinSans',
+              fontSize: MediaQuery.of(context).size.height * 0.03,
+              color: Colors.white),
         ),
         actions: <Widget>[
           Padding(
@@ -382,127 +376,181 @@ class _HomepageState extends State<Homepage> {
                   color: const Color.fromARGB(255, 78, 181, 131),
                   fontSize: MediaQuery.of(context).size.height * 0.05),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            Column(
               children: [
-                Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    InkWell(
-                      onTap: (() {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const BioPage()));
-                      }),
-                      child: Material(
-                        elevation: 6,
-                        borderRadius: BorderRadius.circular(15),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.white,
-                                  width: 2.0,
-                                  style: BorderStyle.solid),
-                              borderRadius: BorderRadius.circular(15),
-                              image: const DecorationImage(
-                                  image: AssetImage("assets/images/bio.png"),
-                                  fit: BoxFit.cover)),
-                          height: MediaQuery.of(context).size.height * 0.12,
-                          width: MediaQuery.of(context).size.width * 0.25,
-                          alignment: Alignment.center,
+                    Column(
+                      children: [
+                        InkWell(
+                          onTap: (() {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const BioPage()));
+                          }),
+                          child: Material(
+                            elevation: 6,
+                            borderRadius: BorderRadius.circular(15),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.white,
+                                      width: 2.0,
+                                      style: BorderStyle.solid),
+                                  borderRadius: BorderRadius.circular(15),
+                                  image: const DecorationImage(
+                                      image:
+                                          AssetImage("assets/images/bio.png"),
+                                      fit: BoxFit.cover)),
+                              height: MediaQuery.of(context).size.height * 0.12,
+                              width: MediaQuery.of(context).size.width * 0.25,
+                              alignment: Alignment.center,
+                            ),
+                          ),
                         ),
-                      ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "Bio Sensor",
+                            style: TextStyle(
+                                fontFamily: 'JosefinSans',
+                                color: const Color.fromARGB(255, 78, 181, 131),
+                                fontSize:
+                                    MediaQuery.of(context).size.height * 0.025),
+                          ),
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "Bio Sensor",
-                        style: TextStyle(
-                            fontFamily: 'JosefinSans',
-                            color: const Color.fromARGB(255, 78, 181, 131),
-                            fontSize:
-                                MediaQuery.of(context).size.height * 0.025),
-                      ),
+                    Column(
+                      children: [
+                        InkWell(
+                          onTap: (() {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return const AgriculturePage();
+                            }));
+                          }),
+                          child: Material(
+                            elevation: 6,
+                            borderRadius: BorderRadius.circular(15),
+                            child: Container(
+                              height: MediaQuery.of(context).size.height * 0.12,
+                              width: MediaQuery.of(context).size.width * 0.25,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.white,
+                                      width: 2.0,
+                                      style: BorderStyle.solid),
+                                  borderRadius: BorderRadius.circular(15),
+                                  image: const DecorationImage(
+                                      image:
+                                          AssetImage("assets/images/soil.png"),
+                                      fit: BoxFit.cover)),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "soil".tr,
+                            style: TextStyle(
+                                fontFamily: 'JosefinSans',
+                                color: const Color.fromARGB(255, 78, 181, 131),
+                                fontSize:
+                                    MediaQuery.of(context).size.height * 0.025),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    InkWell(
-                      onTap: (() {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return const AgriculturePage();
-                        }));
-                      }),
-                      child: Material(
-                        elevation: 6,
-                        borderRadius: BorderRadius.circular(15),
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * 0.12,
-                          width: MediaQuery.of(context).size.width * 0.25,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.white,
-                                  width: 2.0,
-                                  style: BorderStyle.solid),
-                              borderRadius: BorderRadius.circular(15),
-                              image: const DecorationImage(
-                                  image: AssetImage("assets/images/soil.png"),
-                                  fit: BoxFit.cover)),
+                    Column(
+                      children: [
+                        InkWell(
+                          onTap: (() {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return const GasPage();
+                            }));
+                          }),
+                          child: Material(
+                            elevation: 6,
+                            borderRadius: BorderRadius.circular(15),
+                            child: Container(
+                              height: MediaQuery.of(context).size.height * 0.12,
+                              width: MediaQuery.of(context).size.width * 0.25,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.white,
+                                      width: 2.0,
+                                      style: BorderStyle.solid),
+                                  borderRadius: BorderRadius.circular(15),
+                                  image: const DecorationImage(
+                                      image:
+                                          AssetImage("assets/images/gas.png"),
+                                      fit: BoxFit.cover)),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "soil".tr,
-                        style: TextStyle(
-                            fontFamily: 'JosefinSans',
-                            color: const Color.fromARGB(255, 78, 181, 131),
-                            fontSize:
-                                MediaQuery.of(context).size.height * 0.03),
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    InkWell(
-                      onTap: (() {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return const GasPage();
-                        }));
-                      }),
-                      child: Material(
-                        elevation: 6,
-                        borderRadius: BorderRadius.circular(15),
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * 0.12,
-                          width: MediaQuery.of(context).size.width * 0.25,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.white,
-                                  width: 2.0,
-                                  style: BorderStyle.solid),
-                              borderRadius: BorderRadius.circular(15),
-                              image: const DecorationImage(
-                                  image: AssetImage("assets/images/gas.png"),
-                                  fit: BoxFit.cover)),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "gas".tr,
+                            style: TextStyle(
+                                fontFamily: 'JosefinSans',
+                                color: const Color.fromARGB(255, 78, 181, 131),
+                                fontSize:
+                                    MediaQuery.of(context).size.height * 0.03),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "gas".tr,
-                        style: TextStyle(
-                            fontFamily: 'JosefinSans',
-                            color: const Color.fromARGB(255, 78, 181, 131),
-                            fontSize:
-                                MediaQuery.of(context).size.height * 0.03),
-                      ),
+                    Column(
+                      children: [
+                        InkWell(
+                          onTap: (() {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return const WaterPage();
+                            }));
+                          }),
+                          child: Material(
+                            elevation: 6,
+                            borderRadius: BorderRadius.circular(15),
+                            child: Container(
+                              height: MediaQuery.of(context).size.height * 0.12,
+                              width: MediaQuery.of(context).size.width * 0.25,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.white,
+                                      width: 2.0,
+                                      style: BorderStyle.solid),
+                                  borderRadius: BorderRadius.circular(15),
+                                  image: const DecorationImage(
+                                      image:
+                                          AssetImage("assets/images/water.png"),
+                                      fit: BoxFit.cover)),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "Water",
+                            style: TextStyle(
+                                fontFamily: 'JosefinSans',
+                                color: const Color.fromARGB(255, 78, 181, 131),
+                                fontSize:
+                                    MediaQuery.of(context).size.height * 0.03),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -513,20 +561,24 @@ class _HomepageState extends State<Homepage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.5,
+                  width: MediaQuery.of(context).size.width * 0.6,
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                      onPressed: () {
-                        builddialog(context);
-                      },
-                      child: Text(
-                        "Change Language".tr,
-                        style: const TextStyle(fontFamily: "JosefinSans"),
-                      )),
+                    onPressed: () {
+                      builddialog(context);
+                    },
+                    child: Text(
+                      "Change Language".tr,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontFamily: "JosefinSans",
+                      ),
+                    ),
+                  ),
                 ),
                 Container(
                   padding: const EdgeInsets.all(8.0),
-                  width: MediaQuery.of(context).size.width * 0.4,
+                  width: MediaQuery.of(context).size.width * 0.6,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           backgroundColor:
@@ -538,6 +590,7 @@ class _HomepageState extends State<Homepage> {
                       },
                       child: Text(
                         "How to Use?".tr,
+                        textAlign: TextAlign.center,
                         style: const TextStyle(
                             fontFamily: "JosefinSans",
                             color: Color.fromARGB(255, 78, 181, 131)),

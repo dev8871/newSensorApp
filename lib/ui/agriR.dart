@@ -36,7 +36,7 @@ class _AgriRState extends State<AgriR> {
   bool timerOff = false;
   String avgConcentration = '';
   String date = '';
-  Timer _timer = Timer.periodic(Duration(seconds: 5), (timer) {});
+  Timer _timer = Timer.periodic(const Duration(seconds: 5), (timer) {});
 
   late String greeting;
   late int len;
@@ -806,7 +806,6 @@ class _AgriRState extends State<AgriR> {
                       'assets/images/bubbles.svg',
                       height: 48,
                       width: 40,
-                      color: const Color.fromARGB(255, 161, 20, 10),
                     ),
                   ),
                 ),
@@ -818,7 +817,6 @@ class _AgriRState extends State<AgriR> {
                     children: [
                       SvgPicture.asset(
                         "assets/images/fail.svg",
-                        color: const Color.fromARGB(255, 161, 20, 10),
                         height: 45,
                       ),
                       Positioned(

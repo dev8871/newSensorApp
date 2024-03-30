@@ -25,7 +25,7 @@ class GasR extends StatefulWidget {
 }
 
 class _GasRState extends State<GasR> {
-  Timer _timer = Timer.periodic(Duration(seconds: 5), (timer) {});
+  Timer _timer = Timer.periodic(const Duration(seconds: 5), (timer) {});
 
   late List<LiveData> chartData;
   late Map<String, dynamic> dailyJsonResponse;

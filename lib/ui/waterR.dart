@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:esp32sensor/services/createPdf.dart';
 import 'package:quickalert/quickalert.dart';
 
 import 'package:flutter/material.dart';
@@ -9,22 +8,22 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class BioR extends StatefulWidget {
+class WaterR extends StatefulWidget {
   final String title;
   final String dataParameter2;
   final String referenceRange;
 
-  const BioR(
+  const WaterR(
       {super.key,
       required this.title,
       required this.dataParameter2,
       required this.referenceRange});
 
   @override
-  State<BioR> createState() => _BioRState();
+  State<WaterR> createState() => _WaterRState();
 }
 
-class _BioRState extends State<BioR> {
+class _WaterRState extends State<WaterR> {
   late List<LiveData> chartData;
   late Map<String, dynamic> dailyJsonResponse;
   List<HistoryData> fullData = [];
@@ -168,7 +167,6 @@ class _BioRState extends State<BioR> {
 
   @override
   void initState() {
-    print("field1");
     updatingHistoryData();
     chartData = getChartData();
 
@@ -305,7 +303,7 @@ class _BioRState extends State<BioR> {
                   ),
                   child: Center(
                     child: Text(
-                      doubleconc == "" ? "... µA" : '$doubleconc µA',
+                      doubleconc == "" ? "... KΩ" : '$doubleconc KΩ',
                       style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'JosefinSans',
@@ -338,248 +336,208 @@ class _BioRState extends State<BioR> {
               ),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: FloatingActionButton.extended(
-                    heroTag: "btn2",
-                    elevation: 10.0,
-                    onPressed: () {
-                      updatingHistoryData();
-                      setState(() {
-                        historyData = dailyData;
-                      });
-                      var index = 0;
-                      String xAxisTitle = "Date";
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return StatefulBuilder(
-                                builder: (context, setState) {
-                              return SimpleDialog(
-                                title: const Text(
-                                  "History",
-                                  style: TextStyle(
-                                      color: Color.fromARGB(255, 68, 158, 115),
-                                      fontFamily: 'JosefinSans'),
-                                ),
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        TextButton(
-                                            style: TextButton.styleFrom(
-                                                elevation: 6.0,
-                                                shadowColor:
-                                                    const Color.fromARGB(
-                                                        255, 144, 142, 142),
-                                                // disabledBackgroundColor:
-                                                //     const Color.fromARGB(255, 68, 158, 115),
-                                                backgroundColor: index == 0
-                                                    ? const Color.fromARGB(
-                                                        255, 68, 158, 115)
-                                                    : const Color.fromARGB(
-                                                        255, 255, 255, 255)),
-                                            onPressed: () {
-                                              setState(() {
-                                                xAxisTitle = "Date";
-                                                index = 0;
-                                                historyData = dailyData;
-                                              });
-                                            },
-                                            child: Text(
-                                              "Daily",
-                                              style: TextStyle(
-                                                  color: (index == 0)
-                                                      ? const Color.fromARGB(
-                                                          255, 255, 255, 255)
-                                                      : const Color.fromARGB(
-                                                          255, 68, 158, 115),
-                                                  fontFamily: 'JosefinSans',
-                                                  fontWeight: FontWeight.w200),
-                                            )),
-                                        TextButton(
-                                            style: TextButton.styleFrom(
-                                                elevation: 6.0,
-                                                shadowColor:
-                                                    const Color.fromARGB(
-                                                        255, 144, 142, 142),
-                                                // disabledBackgroundColor:
-                                                //     const Color.fromARGB(255, 68, 158, 115),
-                                                backgroundColor: (index == 1)
-                                                    ? const Color.fromARGB(
-                                                        255, 68, 158, 115)
-                                                    : const Color.fromARGB(
-                                                        255, 255, 255, 255)),
-                                            onPressed: () {
-                                              setState(() {
-                                                xAxisTitle = "Past Weeks";
-                                                index = 1;
-                                                historyData = weeklyData;
-                                              });
-                                            },
-                                            child: Text(
-                                              "Weekly",
-                                              style: TextStyle(
-                                                  color: (index == 1)
-                                                      ? const Color.fromARGB(
-                                                          255, 255, 255, 255)
-                                                      : const Color.fromARGB(
-                                                          255, 68, 158, 115),
-                                                  fontFamily: 'JosefinSans',
-                                                  fontWeight: FontWeight.w200),
-                                            )),
-                                        TextButton(
-                                            style: TextButton.styleFrom(
-                                                elevation: 6.0,
-                                                shadowColor:
-                                                    const Color.fromARGB(
-                                                        255, 144, 142, 142),
-                                                // disabledBackgroundColor:
-                                                //     const Color.fromARGB(255, 68, 158, 115),
-                                                backgroundColor: (index == 2)
-                                                    ? const Color.fromARGB(
-                                                        255, 68, 158, 115)
-                                                    : const Color.fromARGB(
-                                                        255, 255, 255, 255)),
-                                            onPressed: () {
-                                              setState(() {
-                                                xAxisTitle = "Past Months";
-                                                index = 2;
-                                                historyData = monthlyData;
-                                              });
-                                            },
-                                            child: Text(
-                                              "Monthly",
-                                              style: TextStyle(
-                                                  color: (index == 2)
-                                                      ? const Color.fromARGB(
-                                                          255, 255, 255, 255)
-                                                      : const Color.fromARGB(
-                                                          255, 68, 158, 115),
-                                                  fontFamily: 'JosefinSans',
-                                                  fontWeight: FontWeight.w200),
-                                            )),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.5,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.95,
-                                      child: SfCartesianChart(
-                                        primaryXAxis: CategoryAxis(
-                                            labelRotation: -90,
-                                            interval: 1.0,
-                                            title: AxisTitle(
-                                                text: xAxisTitle,
-                                                textStyle: const TextStyle(
-                                                    fontSize: 12.0,
-                                                    color: Color.fromARGB(
-                                                        255, 68, 158, 115),
-                                                    fontFamily:
-                                                        'JosefinSans'))),
-                                        primaryYAxis: NumericAxis(
-                                            interval: 5.0,
-                                            title: AxisTitle(
-                                                text:
-                                                    'Average Concentration (PPM)',
-                                                textStyle: const TextStyle(
-                                                    fontSize: 12.0,
-                                                    color: Color.fromARGB(
-                                                        255, 68, 158, 115),
-                                                    fontFamily:
-                                                        'JosefinSans'))),
-                                        series: <ChartSeries>[
-                                          StackedColumnSeries<HistoryData,
-                                                  String>(
-                                              color: const Color.fromARGB(
-                                                  255, 68, 158, 115),
-                                              dataSource: historyData,
-                                              xValueMapper:
-                                                  (HistoryData history, _) =>
-                                                      history.date,
-                                              yValueMapper:
-                                                  (HistoryData history, _) =>
-                                                      history.concentration)
-                                        ],
-                                      )),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 10,
-                                        bottom: 10,
-                                        left:
-                                            MediaQuery.of(context).size.width *
-                                                0.5,
-                                        right: 15),
-                                    child: TextButton(
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: FloatingActionButton.extended(
+                heroTag: "btn2",
+                elevation: 10.0,
+                onPressed: () {
+                  updatingHistoryData();
+                  setState(() {
+                    historyData = dailyData;
+                  });
+                  var index = 0;
+                  String xAxisTitle = "Date";
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return StatefulBuilder(builder: (context, setState) {
+                          return SimpleDialog(
+                            title: const Text(
+                              "History",
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 68, 158, 115),
+                                  fontFamily: 'JosefinSans'),
+                            ),
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    TextButton(
                                         style: TextButton.styleFrom(
-                                            elevation: 8.0,
+                                            elevation: 6.0,
                                             shadowColor: const Color.fromARGB(
                                                 255, 144, 142, 142),
                                             // disabledBackgroundColor:
                                             //     const Color.fromARGB(255, 68, 158, 115),
-                                            backgroundColor:
-                                                const Color.fromARGB(
-                                                    255, 68, 158, 115)),
-                                        onPressed: () => Navigator.pop(context),
-                                        child: const Text(
-                                          "Okay",
+                                            backgroundColor: index == 0
+                                                ? const Color.fromARGB(
+                                                    255, 68, 158, 115)
+                                                : const Color.fromARGB(
+                                                    255, 255, 255, 255)),
+                                        onPressed: () {
+                                          setState(() {
+                                            xAxisTitle = "Date";
+                                            index = 0;
+                                            historyData = dailyData;
+                                          });
+                                        },
+                                        child: Text(
+                                          "Daily",
                                           style: TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 255, 255, 255),
+                                              color: (index == 0)
+                                                  ? const Color.fromARGB(
+                                                      255, 255, 255, 255)
+                                                  : const Color.fromARGB(
+                                                      255, 68, 158, 115),
                                               fontFamily: 'JosefinSans',
-                                              fontWeight: FontWeight.w400),
+                                              fontWeight: FontWeight.w200),
                                         )),
-                                  )
-                                ],
-                              );
-                            });
-                          });
-                    },
-                    icon: const Icon(Icons.calendar_month, color: Colors.white),
-                    label: const Text(
-                      'History',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'JosefinSans',
-                          fontSize: 15.0),
-                    ),
-                    backgroundColor: const Color.fromARGB(255, 68, 158, 115)),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(4),
-                child: FloatingActionButton.extended(
-                    onPressed: () {
-                      CreatePdf().createPDF(
-                          'Bio Sensor',
-                          widget.title,
-                          humidity,
-                          temperature,
-                          concentration,
-                          widget.referenceRange);
-                    },
-                    icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
-                    label: const Text(
-                      'Generate',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'JosefinSans',
-                          fontSize: 15.0),
-                    ),
-                    backgroundColor: const Color.fromARGB(255, 238, 119, 55)),
-              )
-            ],
+                                    TextButton(
+                                        style: TextButton.styleFrom(
+                                            elevation: 6.0,
+                                            shadowColor: const Color.fromARGB(
+                                                255, 144, 142, 142),
+                                            // disabledBackgroundColor:
+                                            //     const Color.fromARGB(255, 68, 158, 115),
+                                            backgroundColor: (index == 1)
+                                                ? const Color.fromARGB(
+                                                    255, 68, 158, 115)
+                                                : const Color.fromARGB(
+                                                    255, 255, 255, 255)),
+                                        onPressed: () {
+                                          setState(() {
+                                            xAxisTitle = "Past Weeks";
+                                            index = 1;
+                                            historyData = weeklyData;
+                                          });
+                                        },
+                                        child: Text(
+                                          "Weekly",
+                                          style: TextStyle(
+                                              color: (index == 1)
+                                                  ? const Color.fromARGB(
+                                                      255, 255, 255, 255)
+                                                  : const Color.fromARGB(
+                                                      255, 68, 158, 115),
+                                              fontFamily: 'JosefinSans',
+                                              fontWeight: FontWeight.w200),
+                                        )),
+                                    TextButton(
+                                        style: TextButton.styleFrom(
+                                            elevation: 6.0,
+                                            shadowColor: const Color.fromARGB(
+                                                255, 144, 142, 142),
+                                            // disabledBackgroundColor:
+                                            //     const Color.fromARGB(255, 68, 158, 115),
+                                            backgroundColor: (index == 2)
+                                                ? const Color.fromARGB(
+                                                    255, 68, 158, 115)
+                                                : const Color.fromARGB(
+                                                    255, 255, 255, 255)),
+                                        onPressed: () {
+                                          setState(() {
+                                            xAxisTitle = "Past Months";
+                                            index = 2;
+                                            historyData = monthlyData;
+                                          });
+                                        },
+                                        child: Text(
+                                          "Monthly",
+                                          style: TextStyle(
+                                              color: (index == 2)
+                                                  ? const Color.fromARGB(
+                                                      255, 255, 255, 255)
+                                                  : const Color.fromARGB(
+                                                      255, 68, 158, 115),
+                                              fontFamily: 'JosefinSans',
+                                              fontWeight: FontWeight.w200),
+                                        )),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.5,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.95,
+                                  child: SfCartesianChart(
+                                    primaryXAxis: CategoryAxis(
+                                        labelRotation: -90,
+                                        interval: 1.0,
+                                        title: AxisTitle(
+                                            text: xAxisTitle,
+                                            textStyle: const TextStyle(
+                                                fontSize: 12.0,
+                                                color: Color.fromARGB(
+                                                    255, 68, 158, 115),
+                                                fontFamily: 'JosefinSans'))),
+                                    primaryYAxis: NumericAxis(
+                                        interval: 5.0,
+                                        title: AxisTitle(
+                                            text: 'Average Concentration (PPM)',
+                                            textStyle: const TextStyle(
+                                                fontSize: 12.0,
+                                                color: Color.fromARGB(
+                                                    255, 68, 158, 115),
+                                                fontFamily: 'JosefinSans'))),
+                                    series: <ChartSeries>[
+                                      StackedColumnSeries<HistoryData, String>(
+                                          color: const Color.fromARGB(
+                                              255, 68, 158, 115),
+                                          dataSource: historyData,
+                                          xValueMapper:
+                                              (HistoryData history, _) =>
+                                                  history.date,
+                                          yValueMapper:
+                                              (HistoryData history, _) =>
+                                                  history.concentration)
+                                    ],
+                                  )),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    top: 10,
+                                    bottom: 10,
+                                    left:
+                                        MediaQuery.of(context).size.width * 0.5,
+                                    right: 15),
+                                child: TextButton(
+                                    style: TextButton.styleFrom(
+                                        elevation: 8.0,
+                                        shadowColor: const Color.fromARGB(
+                                            255, 144, 142, 142),
+                                        // disabledBackgroundColor:
+                                        //     const Color.fromARGB(255, 68, 158, 115),
+                                        backgroundColor: const Color.fromARGB(
+                                            255, 68, 158, 115)),
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text(
+                                      "Okay",
+                                      style: TextStyle(
+                                          color: Color.fromARGB(
+                                              255, 255, 255, 255),
+                                          fontFamily: 'JosefinSans',
+                                          fontWeight: FontWeight.w400),
+                                    )),
+                              )
+                            ],
+                          );
+                        });
+                      });
+                },
+                icon: const Icon(Icons.calendar_month, color: Colors.white),
+                label: const Text(
+                  'History',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'JosefinSans',
+                      fontSize: 15.0),
+                ),
+                backgroundColor: const Color.fromARGB(255, 68, 158, 115)),
           ),
         ],
       ),
@@ -587,7 +545,7 @@ class _BioRState extends State<BioR> {
   }
 
   Future<void> _loadData() async {
-    url = "https://api.thingspeak.com/channels/2303264/feeds.json?results";
+    url = "https://api.thingspeak.com/channels/2490321/feeds.json?results";
 
     //http request
 
@@ -596,28 +554,31 @@ class _BioRState extends State<BioR> {
     if (response.statusCode == 200 && timerOff == false) {
       setState(() {
         jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+        print(jsonResponse);
         int length = jsonResponse["feeds"].length;
 
         try {
-          if (jsonResponse["feeds"][length - 1]["field1"] != null) {
+          if (jsonResponse["feeds"][length - 1]["field1"] != "") {
             concentration = jsonResponse["feeds"][length - 1]["field1"];
-            int i = 0;
-            int clength = concentration.length;
+            doubleconc = concentration;
+            // int i = 0;
+            // int clength = concentration.length;
 
-            // print(uricAcid);
-            concSimplified = "";
-            while (concentration[i] != '.' && i < clength) {
-              concSimplified += concentration[i];
-              i++;
-            }
-            i = 0;
-            doubleconc = "";
-            while (concentration[i] != '\r' && i < clength) {
-              doubleconc += concentration[i];
-              i++;
-            }
-            concentration = concSimplified;
+            // // print(uricAcid);
+            // concSimplified = "";
+            // while (concentration[i] != '.' && i < clength) {
+            //   concSimplified += concentration[i];
+            //   i++;
+            // }
+            // i = 0;
+            // doubleconc = "";
+            // while (concentration[i] != '\r' && i < clength) {
+            //   doubleconc += concentration[i];
+            //   i++;
+            // }
+            // concentration = concSimplified;
             // print("length= $length conc= $uricAcidSimplified");
+            print(concentration);
           }
           setState(() {
             if (doubleconc == "") {
@@ -674,7 +635,7 @@ class _BioRState extends State<BioR> {
 
         if (int.parse(concentration) >= 100 &&
             timerOff == false &&
-            last_concentration != concentration) {
+            last_concentration != int.parse(concentration)) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             padding: const EdgeInsets.all(16.0),
             content: Stack(

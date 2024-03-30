@@ -5,7 +5,7 @@ import '../shared/loading.dart';
 
 class Register extends StatefulWidget {
   final Function toggleView;
-  const Register({Key? key, required this.toggleView}) : super(key: key);
+  const Register({super.key, required this.toggleView});
 
   @override
   State<Register> createState() => _RegisterState();
@@ -35,9 +35,9 @@ class _RegisterState extends State<Register> {
               title: const Text(
                 "Register",
                 style: TextStyle(
-                  fontFamily: 'JosefinSans',
-                  fontSize: 25.0,
-                ),
+                    fontFamily: 'JosefinSans',
+                    fontSize: 25.0,
+                    color: Colors.white),
               ),
               actions: <Widget>[
                 Padding(
@@ -191,7 +191,7 @@ class _RegisterState extends State<Register> {
                                         : const Icon(
                                             Icons.visibility_off,
                                             color: Color.fromARGB(
-                                                255, 22, 152, 217),
+                                                255, 68, 158, 115),
                                           ))),
                             validator: ((value) {
                               if (value == null || value.isEmpty) {

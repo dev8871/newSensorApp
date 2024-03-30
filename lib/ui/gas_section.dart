@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
 class GasPage extends StatefulWidget {
-  const GasPage({Key? key}) : super(key: key);
+  const GasPage({super.key});
 
   @override
   State<GasPage> createState() => _GasPageState();
@@ -24,7 +24,7 @@ class _GasPageState extends State<GasPage> {
   late String url;
 
   late String resistance = "";
-  Timer _timer = Timer.periodic(Duration(seconds: 5), (timer) {});
+  Timer _timer = Timer.periodic(const Duration(seconds: 5), (timer) {});
   int concentration = 0;
   String butane = '0';
   String carbonDioxide = '0';

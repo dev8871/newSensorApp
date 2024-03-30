@@ -6,7 +6,7 @@ import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
 
 class BioPage extends StatefulWidget {
-  const BioPage({Key? key}) : super(key: key);
+  const BioPage({super.key});
 
   @override
   State<BioPage> createState() => _BioPageState();
@@ -15,7 +15,7 @@ class BioPage extends StatefulWidget {
 class _BioPageState extends State<BioPage> {
   String avgConcentration = '';
   String date = '';
-  Timer _timer = Timer.periodic(Duration(seconds: 5), (timer) {});
+  Timer _timer = Timer.periodic(const Duration(seconds: 5), (timer) {});
 
   late String greeting;
   late int len;

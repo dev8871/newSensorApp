@@ -7,7 +7,7 @@ import '../shared/loading.dart';
 
 class SignIn extends StatefulWidget {
   final Function toggleView;
-  const SignIn({Key? key, required this.toggleView}) : super(key: key);
+  const SignIn({super.key, required this.toggleView});
 
   @override
   State<SignIn> createState() => _SignInState();
@@ -32,9 +32,9 @@ class _SignInState extends State<SignIn> {
               title: const Text(
                 "Sign-In",
                 style: TextStyle(
-                  fontFamily: 'JosefinSans',
-                  fontSize: 25.0,
-                ),
+                    fontFamily: 'JosefinSans',
+                    fontSize: 25.0,
+                    color: Colors.white),
               ),
               actions: <Widget>[
                 Padding(
@@ -123,7 +123,7 @@ class _SignInState extends State<SignIn> {
                                         : const Icon(
                                             Icons.visibility_off,
                                             color: Color.fromARGB(
-                                                255, 22, 152, 217),
+                                                255, 68, 158, 115),
                                           ))),
                             validator: ((value) {
                               if (value == null || value.isEmpty) {
@@ -159,6 +159,7 @@ class _SignInState extends State<SignIn> {
                                 child: const Text(
                                   "Forgot Password ?",
                                   style: TextStyle(
+                                      color: Colors.blue,
                                       fontFamily: 'JosefinSans',
                                       fontWeight: FontWeight.w700),
                                 )),

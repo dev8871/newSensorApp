@@ -8,7 +8,7 @@ import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
 
 class AgriculturePage extends StatefulWidget {
-  const AgriculturePage({Key? key}) : super(key: key);
+  const AgriculturePage({super.key});
 
   @override
   State<AgriculturePage> createState() => _AgriculturePageState();
