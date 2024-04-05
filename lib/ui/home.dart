@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:esp32sensor/authentication/changePassword.dart';
+import 'package:esp32sensor/authentication/changepassword.dart';
 import 'package:esp32sensor/intro_slider.dart';
 import 'package:esp32sensor/services/editProfile.dart';
 import 'package:esp32sensor/ui/About_us.dart';
@@ -8,12 +8,14 @@ import 'package:esp32sensor/ui/agriculture_section.dart';
 import 'package:esp32sensor/ui/gas_section.dart';
 import 'package:esp32sensor/ui/water_section.dart';
 import 'package:esp32sensor/video/videoStream.dart';
+import 'package:esp32sensor/widgets/DrawerOptions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import "package:flutter/material.dart";
 import 'package:get/get.dart';
 
 import '../services/auth.dart';
+import '../widgets/sensors.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -40,8 +42,6 @@ class _HomepageState extends State<Homepage> {
       channel = (snap.data() as Map<String, dynamic>)["channel"];
       mobile = (snap.data() as Map<String, dynamic>)["mobile"];
       uid = (snap.data() as Map<String, dynamic>)["uid"];
-      print(name);
-      print(email);
     });
     return snap;
   }
@@ -147,171 +147,81 @@ class _HomepageState extends State<Homepage> {
               padding: const EdgeInsets.only(top: 15.0),
               child: Column(
                 children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => EditProfile(
-                                    name: name,
-                                    mobile: mobile,
-                                    channel: channel,
-                                    email: email,
-                                    uid: uid,
-                                  )));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(children: [
-                        const Padding(
-                            padding: EdgeInsets.all(20.0),
-                            child: Icon(
-                              Icons.edit_note_sharp,
-                              size: 25.0,
-                              color: Colors.black54,
-                            )),
-                        Expanded(
-                            child: Text(
-                          "Edit Profile".tr,
-                          style: const TextStyle(
-                              color: Colors.black54,
-                              fontSize: 16,
-                              fontFamily: 'JosefinSans'),
-                        ))
-                      ]),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ChangePassword()));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(children: [
-                        const Padding(
-                            padding: EdgeInsets.all(18.0),
-                            child: Icon(
-                              Icons.lock_open_sharp,
-                              size: 25.0,
-                              color: Colors.black54,
-                            )),
-                        Expanded(
-                            child: Text(
-                          "Change Password".tr,
-                          style: const TextStyle(
-                              color: Colors.black54,
-                              fontSize: 16,
-                              fontFamily: 'JosefinSans'),
-                        ))
-                      ]),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      builddialog(context);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(children: [
-                        const Padding(
-                            padding: EdgeInsets.all(18.0),
-                            child: Icon(
-                              Icons.text_format_outlined,
-                              size: 25.0,
-                              color: Colors.black54,
-                            )),
-                        Expanded(
-                            child: Text(
-                          "Change Language".tr,
-                          style: const TextStyle(
-                              color: Colors.black54,
-                              fontSize: 16,
-                              fontFamily: 'JosefinSans'),
-                        ))
-                      ]),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const IntroSliderPage()));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(children: [
-                        const Padding(
-                            padding: EdgeInsets.all(18.0),
-                            child: Icon(
-                              Icons.question_answer_outlined,
-                              size: 25.0,
-                              color: Colors.black54,
-                            )),
-                        Expanded(
-                            child: Text(
-                          "How to use".tr,
-                          style: const TextStyle(
-                              color: Colors.black54,
-                              fontSize: 16,
-                              fontFamily: 'JosefinSans'),
-                        ))
-                      ]),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const MyWidget()));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(children: [
-                        const Padding(
-                            padding: EdgeInsets.all(18.0),
-                            child: Icon(
-                              Icons.video_camera_front_outlined,
-                              size: 25.0,
-                              color: Colors.black54,
-                            )),
-                        Expanded(
-                            child: Text(
-                          "Demo Video".tr,
-                          style: const TextStyle(
-                              color: Colors.black54,
-                              fontSize: 16,
-                              fontFamily: 'JosefinSans'),
-                        ))
-                      ]),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const AboutUs()));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(children: [
-                        const Padding(
-                            padding: EdgeInsets.all(18.0),
-                            child: Icon(
-                              Icons.info,
-                              size: 25.0,
-                              color: Colors.black54,
-                            )),
-                        Expanded(
-                            child: Text(
-                          "About Us".tr,
-                          style: const TextStyle(
-                              color: Colors.black54,
-                              fontSize: 16,
-                              fontFamily: 'JosefinSans'),
-                        ))
-                      ]),
-                    ),
-                  ),
+                  DrawerOption(
+                      ontap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditProfile(
+                                      name: name,
+                                      mobile: mobile,
+                                      channel: channel,
+                                      email: email,
+                                      uid: uid,
+                                    )));
+                      },
+                      title: "Edit Profile".tr,
+                      icon: const Icon(
+                        Icons.edit_note_sharp,
+                        size: 25.0,
+                        color: Colors.black54,
+                      )),
+                  DrawerOption(
+                      ontap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ChangePassword()));
+                      },
+                      title: "Change Password".tr,
+                      icon: const Icon(
+                        Icons.lock_open_sharp,
+                        size: 25.0,
+                        color: Colors.black54,
+                      )),
+                  DrawerOption(
+                      ontap: () {
+                        builddialog(context);
+                      },
+                      title: "Change Language".tr,
+                      icon: const Icon(
+                        Icons.text_format_outlined,
+                        size: 25.0,
+                        color: Colors.black54,
+                      )),
+                  DrawerOption(
+                      ontap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const IntroSliderPage()));
+                      },
+                      title: "How to use".tr,
+                      icon: const Icon(
+                        Icons.question_answer_outlined,
+                        size: 25.0,
+                        color: Colors.black54,
+                      )),
+                  DrawerOption(
+                      ontap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const MyWidget()));
+                      },
+                      title: "Demo Video".tr,
+                      icon: const Icon(
+                        Icons.video_camera_front_outlined,
+                        size: 25.0,
+                        color: Colors.black54,
+                      )),
+                  DrawerOption(
+                      ontap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const AboutUs()));
+                      },
+                      title: "About Us".tr,
+                      icon: const Icon(
+                        Icons.info,
+                        size: 25.0,
+                        color: Colors.black54,
+                      )),
                 ],
               ),
             )
@@ -381,177 +291,50 @@ class _HomepageState extends State<Homepage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Column(
-                      children: [
-                        InkWell(
-                          onTap: (() {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const BioPage()));
-                          }),
-                          child: Material(
-                            elevation: 6,
-                            borderRadius: BorderRadius.circular(15),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Colors.white,
-                                      width: 2.0,
-                                      style: BorderStyle.solid),
-                                  borderRadius: BorderRadius.circular(15),
-                                  image: const DecorationImage(
-                                      image:
-                                          AssetImage("assets/images/bio.png"),
-                                      fit: BoxFit.cover)),
-                              height: MediaQuery.of(context).size.height * 0.12,
-                              width: MediaQuery.of(context).size.width * 0.25,
-                              alignment: Alignment.center,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "Bio Sensor",
-                            style: TextStyle(
-                                fontFamily: 'JosefinSans',
-                                color: const Color.fromARGB(255, 78, 181, 131),
-                                fontSize:
-                                    MediaQuery.of(context).size.height * 0.025),
-                          ),
-                        ),
-                      ],
+                    sensorButton(
+                      title: "Bio Sensor",
+                      imageAdd: "assets/images/bio.png",
+                      ontap: (() {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const BioPage()));
+                      }),
+                      titleSize: 0.025,
                     ),
-                    Column(
-                      children: [
-                        InkWell(
-                          onTap: (() {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return const AgriculturePage();
-                            }));
-                          }),
-                          child: Material(
-                            elevation: 6,
-                            borderRadius: BorderRadius.circular(15),
-                            child: Container(
-                              height: MediaQuery.of(context).size.height * 0.12,
-                              width: MediaQuery.of(context).size.width * 0.25,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Colors.white,
-                                      width: 2.0,
-                                      style: BorderStyle.solid),
-                                  borderRadius: BorderRadius.circular(15),
-                                  image: const DecorationImage(
-                                      image:
-                                          AssetImage("assets/images/soil.png"),
-                                      fit: BoxFit.cover)),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "soil".tr,
-                            style: TextStyle(
-                                fontFamily: 'JosefinSans',
-                                color: const Color.fromARGB(255, 78, 181, 131),
-                                fontSize:
-                                    MediaQuery.of(context).size.height * 0.025),
-                          ),
-                        ),
-                      ],
-                    ),
+                    sensorButton(
+                        ontap: (() {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return const AgriculturePage();
+                          }));
+                        }),
+                        title: "soil".tr,
+                        imageAdd: "assets/images/soil.png",
+                        titleSize: 0.025),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Column(
-                      children: [
-                        InkWell(
-                          onTap: (() {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return const GasPage();
-                            }));
-                          }),
-                          child: Material(
-                            elevation: 6,
-                            borderRadius: BorderRadius.circular(15),
-                            child: Container(
-                              height: MediaQuery.of(context).size.height * 0.12,
-                              width: MediaQuery.of(context).size.width * 0.25,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Colors.white,
-                                      width: 2.0,
-                                      style: BorderStyle.solid),
-                                  borderRadius: BorderRadius.circular(15),
-                                  image: const DecorationImage(
-                                      image:
-                                          AssetImage("assets/images/gas.png"),
-                                      fit: BoxFit.cover)),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "gas".tr,
-                            style: TextStyle(
-                                fontFamily: 'JosefinSans',
-                                color: const Color.fromARGB(255, 78, 181, 131),
-                                fontSize:
-                                    MediaQuery.of(context).size.height * 0.03),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        InkWell(
-                          onTap: (() {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return const WaterPage();
-                            }));
-                          }),
-                          child: Material(
-                            elevation: 6,
-                            borderRadius: BorderRadius.circular(15),
-                            child: Container(
-                              height: MediaQuery.of(context).size.height * 0.12,
-                              width: MediaQuery.of(context).size.width * 0.25,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Colors.white,
-                                      width: 2.0,
-                                      style: BorderStyle.solid),
-                                  borderRadius: BorderRadius.circular(15),
-                                  image: const DecorationImage(
-                                      image:
-                                          AssetImage("assets/images/water.png"),
-                                      fit: BoxFit.cover)),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "Water",
-                            style: TextStyle(
-                                fontFamily: 'JosefinSans',
-                                color: const Color.fromARGB(255, 78, 181, 131),
-                                fontSize:
-                                    MediaQuery.of(context).size.height * 0.03),
-                          ),
-                        ),
-                      ],
-                    ),
+                    sensorButton(
+                        ontap: (() {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return const GasPage();
+                          }));
+                        }),
+                        title: "gas".tr,
+                        imageAdd: "assets/images/gas.png",
+                        titleSize: 0.03),
+                    sensorButton(
+                        ontap: (() {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return const WaterPage();
+                          }));
+                        }),
+                        title: "Water",
+                        imageAdd: "assets/images/water.png",
+                        titleSize: 0.03),
                   ],
                 ),
               ],

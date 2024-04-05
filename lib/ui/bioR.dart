@@ -51,6 +51,7 @@ class _BioRState extends State<BioR> {
   String humidity = '0';
   String temperature = '0';
 
+  // ignore: non_constant_identifier_names
   int last_concentration = 0;
   int time = 11;
   int j = 0;
@@ -90,7 +91,6 @@ class _BioRState extends State<BioR> {
         dailyJsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
         int length = dailyJsonResponse["feeds"].length;
 
-        print('length = $length');
         for (int i = 9; i >= 0; i--) {
           try {
             concentration = '0';
@@ -98,6 +98,7 @@ class _BioRState extends State<BioR> {
               concentration = dailyJsonResponse["feeds"][length - 1]["field1"];
             }
           } catch (e) {
+            // ignore: avoid_print
             print(e.toString());
           }
           DateTime date = DateTime.parse(
@@ -120,6 +121,7 @@ class _BioRState extends State<BioR> {
                 myValue = int.parse(concentration);
               }
             } catch (e) {
+              // ignore: avoid_print
               print(e.toString());
             }
             avgVal += myValue;
@@ -168,7 +170,6 @@ class _BioRState extends State<BioR> {
 
   @override
   void initState() {
-    print("field1");
     updatingHistoryData();
     chartData = getChartData();
 
@@ -641,40 +642,13 @@ class _BioRState extends State<BioR> {
             }
           });
         } catch (e) {
+          // ignore: avoid_print
           print(e.toString());
         }
-        // try {
-        //   if (jsonResponse["feeds"][length - 1]["field1"] !=
-        //       null) {
-        //     concentration =
-        //         jsonResponse["feeds"][length - 1]["field1"];
-        //   } else {
-        //     concentration = last_concentration.toString();
-        //     print("Null value from Thingspeak: ");
-        //   }
-        // } catch (e) {
-        //   print(e.toString());
-        // }
-        // try {
-        //   if (jsonResponse["feeds"][length - 1]["field1"] != null) {
-        //     temperature = jsonResponse["feeds"][length - 1]["field1"];
-        //   }
-        // } catch (e) {
-        //   print(e.toString());
-        // }
-        // try {
-        //   if (jsonResponse["feeds"][length - 1]["field2"] != null) {
-        //     humidity = jsonResponse["feeds"][length - 1]["field2"];
-        //   }
-        // } catch (e) {
-        //   print(e.toString());
-        // }
-
-        // print(concentration);
 
         if (int.parse(concentration) >= 100 &&
             timerOff == false &&
-            last_concentration != concentration) {
+            last_concentration != int.parse(concentration)) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             padding: const EdgeInsets.all(16.0),
             content: Stack(

@@ -36,9 +36,6 @@ class _VideoPageState extends State<VideoPage> {
           playedColor: const Color.fromARGB(255, 144, 177, 161),
         ),
       );
-      setState(() {
-        print("video good");
-      });
     });
   }
 

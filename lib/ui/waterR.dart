@@ -8,6 +8,8 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../widgets/beakers.dart';
+
 class WaterR extends StatefulWidget {
   final String title;
   final String dataParameter2;
@@ -33,7 +35,15 @@ class _WaterRState extends State<WaterR> {
   List<HistoryData> historyData = [];
   late ChartSeriesController _chartSeriesController;
   String concSimplified = "";
-  String doubleconc = "";
+  List<String> doubleconc = ["", "", "", "", "", ""];
+  List<HistoryData> frequencyData = [
+    HistoryData("1", 0),
+    HistoryData("2", 0),
+    HistoryData("3", 0),
+    HistoryData("4", 0),
+    HistoryData("5", 0),
+    HistoryData("6", 0),
+  ];
   Color graphColor = const Color.fromARGB(255, 152, 151, 151);
   String graphLabel = "...";
   // Color.fromARGB(255, 68, 158, 115)
@@ -46,7 +56,7 @@ class _WaterRState extends State<WaterR> {
   late int len;
   late Map<String, dynamic> jsonResponse;
   late String url;
-  String concentration = '0';
+  var concentration = '0';
   String humidity = '0';
   String temperature = '0';
 
@@ -171,7 +181,7 @@ class _WaterRState extends State<WaterR> {
     chartData = getChartData();
 
     _timer = Timer.periodic(
-        const Duration(seconds: 5), (Timer timer) => _loadData());
+        const Duration(seconds: 10), (Timer timer) => _loadData());
     super.initState();
     super.initState();
 
@@ -283,57 +293,55 @@ class _WaterRState extends State<WaterR> {
                   letterSpacing: 2.0),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Material(
-                elevation: 6,
-                borderRadius: BorderRadius.circular(18),
-                child: Container(
-                  padding: const EdgeInsets.all(8.0),
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  height: MediaQuery.of(context).size.height * 0.2,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: Colors.white,
-                        width: 3.0,
-                        style: BorderStyle.solid),
-                    borderRadius: BorderRadius.circular(18),
-                    color: const Color.fromARGB(255, 23, 102, 65),
-                  ),
-                  child: Center(
-                    child: Text(
-                      doubleconc == "" ? "... KΩ" : '$doubleconc KΩ',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'JosefinSans',
-                          fontSize: MediaQuery.of(context).size.height * 0.07),
-                    ),
-                  ),
+          Center(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Beakers(doubleconc: doubleconc[0], index: 1),
+                    Beakers(doubleconc: doubleconc[1], index: 2),
+                    Beakers(doubleconc: doubleconc[2], index: 3)
+                  ],
                 ),
-              ),
-            ],
-          ),
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            width: MediaQuery.of(context).size.width * 0.8,
-            height: MediaQuery.of(context).size.height * 0.2,
-            decoration: BoxDecoration(
-              border: Border.all(
-                  color: Colors.white, width: 3.0, style: BorderStyle.solid),
-              borderRadius: BorderRadius.circular(18),
-              color: graphColor,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Beakers(doubleconc: doubleconc[4], index: 5),
+                    Beakers(doubleconc: doubleconc[3], index: 4),
+                    Beakers(doubleconc: doubleconc[5], index: 6)
+                  ],
+                ),
+              ],
             ),
-            child: Center(
-              child: Text(
-                // doubleconc == "" ? "... µA" : '$doubleconc µA',
-                graphLabel,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'JosefinSans',
-                    fontSize: MediaQuery.of(context).size.height * 0.06,
-                    fontWeight: FontWeight.bold),
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: SfCartesianChart(
+              primaryXAxis: CategoryAxis(
+                  interval: 1.0,
+                  title: AxisTitle(
+                      text: "Beakers",
+                      textStyle: const TextStyle(
+                          fontSize: 12.0,
+                          color: Color.fromARGB(255, 68, 158, 115),
+                          fontFamily: 'JosefinSans'))),
+              primaryYAxis: NumericAxis(
+                  interval: 5.0,
+                  title: AxisTitle(
+                      text: 'Frequency',
+                      textStyle: const TextStyle(
+                          fontSize: 12.0,
+                          color: Color.fromARGB(255, 68, 158, 115),
+                          fontFamily: 'JosefinSans'))),
+              series: <ChartSeries>[
+                StackedColumnSeries<HistoryData, String>(
+                    color: const Color.fromARGB(255, 68, 158, 115),
+                    dataSource: frequencyData,
+                    xValueMapper: (HistoryData history, _) => history.date,
+                    yValueMapper: (HistoryData history, _) =>
+                        history.concentration)
+              ],
             ),
           ),
           Padding(
@@ -554,13 +562,33 @@ class _WaterRState extends State<WaterR> {
     if (response.statusCode == 200 && timerOff == false) {
       setState(() {
         jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
-        print(jsonResponse);
         int length = jsonResponse["feeds"].length;
 
         try {
           if (jsonResponse["feeds"][length - 1]["field1"] != "") {
             concentration = jsonResponse["feeds"][length - 1]["field1"];
-            doubleconc = concentration;
+            double temp = double.parse(concentration);
+            setState(() {
+              if (temp >= 30 && temp <= 35) {
+                doubleconc[0] = concentration;
+                ++frequencyData[0].concentration;
+              } else if (temp > 35 && temp < 40) {
+                doubleconc[1] = concentration;
+                ++frequencyData[1].concentration;
+              } else if (temp >= 40 && temp <= 45) {
+                doubleconc[2] = concentration;
+                ++frequencyData[2].concentration;
+              } else if (temp > 45 && temp <= 50) {
+                doubleconc[3] = concentration;
+                ++frequencyData[3].concentration;
+              } else if (temp > 50 && temp <= 55) {
+                doubleconc[4] = concentration;
+                ++frequencyData[4].concentration;
+              } else if (temp > 55) {
+                doubleconc[5] = concentration;
+                ++frequencyData[5].concentration;
+              }
+            });
             // int i = 0;
             // int clength = concentration.length;
 
@@ -578,29 +606,7 @@ class _WaterRState extends State<WaterR> {
             // }
             // concentration = concSimplified;
             // print("length= $length conc= $uricAcidSimplified");
-            print(concentration);
           }
-          setState(() {
-            if (doubleconc == "") {
-              graphColor = const Color.fromARGB(255, 255, 255, 255);
-              graphLabel = "...";
-            } else if (double.parse(doubleconc) < 20) {
-              graphColor = const Color.fromARGB(255, 68, 158, 115);
-              graphLabel = "Pure";
-            } else if (double.parse(doubleconc) < 40) {
-              graphColor = const Color.fromARGB(255, 233, 249, 8);
-              graphLabel = "Good";
-            } else if (double.parse(doubleconc) < 60) {
-              graphColor = const Color.fromARGB(255, 255, 191, 0);
-              graphLabel = "Moderate";
-            } else if (double.parse(doubleconc) < 80) {
-              graphColor = Colors.orange;
-              graphLabel = "Unhealthy";
-            } else if (double.parse(doubleconc) < 40) {
-              graphColor = Colors.red;
-              graphLabel = "Hazardous";
-            }
-          });
         } catch (e) {
           print(e.toString());
         }
@@ -754,6 +760,6 @@ class LiveData {
 
 class HistoryData {
   HistoryData(this.date, this.concentration);
-  final String date;
-  final int concentration;
+  String date;
+  int concentration;
 }

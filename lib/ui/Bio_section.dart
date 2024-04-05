@@ -72,40 +72,9 @@ class _BioPageState extends State<BioPage> {
             // print("length= $length conc= $uricAcidSimplified");
           }
         } catch (e) {
+          // ignore: avoid_print
           print(e.toString());
         }
-        // try {
-        //   if (jsonResponse["feeds"][length - 1]["field2"] != null) {
-        //     glucose = jsonResponse["feeds"][length - 1]["field2"];
-        //   }
-        // } catch (e) {
-        //   print(e.toString());
-        // }
-        // try {
-        //   if (jsonResponse["feeds"][length - 1]["field3"] != null) {
-        //     caffeine = jsonResponse["feeds"][length - 1]["field3"];
-        //   }
-        // } catch (e) {
-        //   print("empty value for caffeine");
-        // }
-        // try {
-        //   if (jsonResponse["feeds"][length - 1]["field4"] != null) {
-        //     temperature = jsonResponse["feeds"][length - 1]["field4"];
-        //   }
-        // } catch (e) {
-        //   print(e.toString());
-        // }
-        // try {
-        //   if (jsonResponse["feeds"][length - 1]["field5"] != null) {
-        //     humidity = jsonResponse["feeds"][length - 1]["field5"];
-        //   }
-        // } catch (e) {
-        //   print(e.toString());
-        // }
-        // print(butane);
-        // print(carbonDioxide);
-        // print(temperature);
-        // print(humidity);
       });
     }
   }

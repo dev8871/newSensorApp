@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:esp32sensor/services/createPdf.dart';
@@ -81,7 +83,6 @@ class _AgriRState extends State<AgriR> {
       setState(() {
         dailyJsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
         int length = dailyJsonResponse["feeds"].length;
-        print('length = $length');
         for (int i = 9; i >= 0; i--) {
           try {
             concentration = '0';
@@ -751,7 +752,7 @@ class _AgriRState extends State<AgriR> {
 
         if (int.parse(concentration) >= 100 &&
             timerOff == false &&
-            last_concentration != concentration) {
+            last_concentration != int.parse(concentration)) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             padding: const EdgeInsets.all(16.0),
             content: Stack(
